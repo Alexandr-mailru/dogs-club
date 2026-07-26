@@ -1,26 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title %}Главная{% endblock %}
+{% block title %}Клуб собак{% endblock %}
 
 {% block content %}
-<h1>Добро пожаловать на сайт о собаках!</h1>
-<p>Здесь вы можете найти информацию о различных породах собак, добавить свою собаку и делиться фотографиями.</p>
+<section class="hero-home">
+  <h1>Клуб собак</h1>
+  <p class="lead">Демо на Django: профили, карточки питомцев, поиск, отзывы и модерация.</p>
+  <div class="hero-actions">
+    <a class="btn" href="{% url 'dog_list' %}">Смотреть собак</a>
+    {% if not user.is_authenticated %}
+      <a class="btn btn-ghost" href="{% url 'register' %}">Регистрация</a>
+    {% else %}
+      <a class="btn btn-ghost" href="{% url 'dog_create' %}">Добавить питомца</a>
+    {% endif %}
+  </div>
+</section>
 
-<h2>Советы по уходу за собаками</h2>
-<form method="post" class="dog-card-footer">
-    <ul>
-        <li>Регулярно вычесывайте шерсть вашей собаки.</li>
-        <li>Убедитесь, что ваш питомец получает достаточное количество физической активности.</li>
-        <li>Следите за рационом питания и не перекармливайте собаку.</li>
-    </ul>
-</form>
-
-<!-- Социальные сети -->
-<h2>Присоединяйтесь к нашему сообществу!</h2>
-<div class="social-links">
-    <a href="https://instagram.com/dogs_community" target="_blank">Instagram</a>
-    <a href="https://vk.com/dogs_community" target="_blank">ВКонтакте</a>
-    <a href="https://t.me/dogy_community" target="_blank">Telegram</a>
-</div>
-
+<section class="feature-list">
+  <h2>Что внутри</h2>
+  <ul>
+    <li>Регистрация, вход и профиль с аватаром</li>
+    <li>CRUD собак и родословных</li>
+    <li>Поиск, сортировка и кэш</li>
+    <li>Отзывы с модерацией и ролями</li>
+    <li>Политика ПДн (ФЗ‑152), согласия и cookie-баннер</li>
+  </ul>
+</section>
 {% endblock %}

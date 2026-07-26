@@ -58,22 +58,22 @@ class PedigreeForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        self.dog = kwargs.pop('dog', None)
+        self.dog = kwargs.pop("dog", None)
         super().__init__(*args, **kwargs)
 
         if self.instance and self.instance.issue_date:
-            self.initial['issue_date'] = self.instance.issue_date.strftime('%Y-%m-%d')
+            self.initial["issue_date"] = self.instance.issue_date.strftime("%Y-%m-%d")
 
-        def clean(self):
-            cleaned_data = super().clean()
-            father = cleaned_data.get('father')
-            mother = cleaned_data.get('mother')
+    def clean(self):
+        cleaned_data = super().clean()
+        father = cleaned_data.get("father")
+        mother = cleaned_data.get("mother")
+        dog = self.dog or getattr(self.instance, "dog", None)
 
-            # Собака не может быть своим же отцом или матерью
-            if self.dog and (father == self.dog or mother == self.dog):
-                raise ValidationError("Собака не может быть своим же отцом или матерью.")
+        if dog and (father == dog or mother == dog):
+            raise ValidationError("Собака не может быть своим же отцом или матерью.")
 
-            if father and mother and father == mother:
-                raise ValidationError("Отец и мать не могут быть одной и той же собакой.")
+        if father and mother and father == mother:
+            raise ValidationError("Отец и мать не могут быть одной и той же собакой.")
 
-            return cleaned_data
+        return cleaned_data

@@ -91,17 +91,12 @@ class UserLoginView(FormView):
 
 
 # Профиль пользователя
-class ProfileView(LoginRequiredMixin, TemplateView):
+class ProfileView(LoginRequiredMixin, DetailView):
     model = CustomUser
-    template_name = 'users/profile.html'
-    context_object_name = 'user_profile'
-
-    def get_object(self, queryset=None):
-        """
-        Получает объект пользователя по параметру slug из URL
-        """
-        slug = self.kwargs.get('slug')
-        return get_object_or_404(CustomUser, slug=slug)
+    template_name = "users/profile.html"
+    context_object_name = "profile_user"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
 
 
 # Обновление данных профиля
@@ -146,12 +141,11 @@ class UpdateProfileView(LoginRequiredMixin, FormView):
 # Смена пароля
 class ChangePasswordView(LoginRequiredMixin, FormView):
     form_class = PasswordChangeForm
-    template_name = 'users/change_password.html'
-    success_url = reverse_lazy('profile')
+    template_name = "users/change_password.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
     def form_valid(self, form):
@@ -163,6 +157,9 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         messages.error(self.request, "Ошибка в форме. Проверьте введенные данные.")
         return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse("profile", kwargs={"slug": self.request.user.slug})
 
 
 # Выход из аккаунта

@@ -2,21 +2,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views
+
+from .legal_views import privacy
 
 urlpatterns = [
-    # Маршрут для админки Django
-    path('admin/', admin.site.urls),
-
-    # Маршруты для приложения users (корневой маршрут)
-    path('', include('users.urls')),
-
-    # Маршруты для приложения dogs
-    path('dogs/', include('dogs.urls')),
-
-    path('admin-only/', views.admin_only_view, name='admin_only'),
-
-    path('moderator-only/', views.moderator_only_view, name='moderator_only'),
+    path("admin/", admin.site.urls),
+    path("privacy/", privacy, name="privacy"),
+    path("", include("users.urls")),
+    path("dogs/", include("dogs.urls")),
 ]
 
 # Добавляем обработку медиафайлов в режиме DEBUG

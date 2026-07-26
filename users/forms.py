@@ -1,33 +1,54 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
+from django.urls import reverse_lazy
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
 from .models import CustomUser, Review
 
 
-# Форма для регистрации нового пользователя
 class CustomUserCreationForm(UserCreationForm):
     password1 = forms.CharField(
         label="Пароль",
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Введите пароль'}),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Введите пароль"}),
     )
     password2 = forms.CharField(
         label="Подтверждение пароля",
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Подтвердите пароль'}),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Подтвердите пароль"}),
+    )
+    pdn_consent = forms.BooleanField(
+        required=True,
+        label="",
+        error_messages={"required": "Нужно согласие на обработку персональных данных."},
     )
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone_number', 'address', 'date_of_birth']
+        fields = ["username", "email", "phone_number", "address", "date_of_birth"]
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя пользователя'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Номер телефона'}),
-            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Адрес'}),
-            'date_of_birth': forms.DateInput(
-                attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Дата рождения'}),
+            "username": forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя пользователя"}),
+            "email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email"}),
+            "phone_number": forms.TextInput(attrs={"class": "form-control", "placeholder": "Номер телефона"}),
+            "address": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Адрес"}),
+            "date_of_birth": forms.DateInput(
+                attrs={"class": "form-control", "type": "date", "placeholder": "Дата рождения"}
+            ),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        privacy = reverse_lazy("privacy")
+        self.fields["pdn_consent"].label = mark_safe(
+            format_html(
+                'Согласен(на) на <a href="{}" target="_blank" rel="noopener">обработку персональных данных</a> '
+                "для создания аккаунта и работы клуба",
+                privacy,
+            )
+        )
+        self.fields["pdn_consent"].widget.attrs["class"] = "check-input"
+
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get("email")
         if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("Пользователь с таким email уже существует.")
         return email
@@ -40,51 +61,49 @@ class CustomUserCreationForm(UserCreationForm):
         return password2
 
 
-# Форма для входа в аккаунт
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя пользователя'}),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя пользователя"}),
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Пароль"}),
     )
 
 
-# Форма для обновления данных пользователя
 class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'phone_number', 'address', 'date_of_birth', 'avatar']
+        fields = ["username", "email", "phone_number", "address", "date_of_birth", "avatar"]
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя пользователя'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Номер телефона'}),
-            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Адрес'}),
-            'date_of_birth': forms.DateInput(
-                attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Дата рождения'}),
-            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            "username": forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя пользователя"}),
+            "email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email"}),
+            "phone_number": forms.TextInput(attrs={"class": "form-control", "placeholder": "Номер телефона"}),
+            "address": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Адрес"}),
+            "date_of_birth": forms.DateInput(
+                attrs={"class": "form-control", "type": "date", "placeholder": "Дата рождения"}
+            ),
+            "avatar": forms.ClearableFileInput(attrs={"class": "form-control"}),
         }
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get("email")
         if CustomUser.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
             raise forms.ValidationError("Этот email уже используется другим пользователем.")
         return email
 
 
-# Форма для смены пароля
 class CustomPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(
         label="Старый пароль",
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Старый пароль'}),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Старый пароль"}),
     )
     new_password1 = forms.CharField(
         label="Новый пароль",
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Новый пароль'}),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Новый пароль"}),
     )
     new_password2 = forms.CharField(
         label="Подтверждение нового пароля",
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Подтвердите новый пароль'}),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Подтвердите новый пароль"}),
     )
 
     def clean_new_password2(self):
@@ -95,18 +114,17 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         return new_password2
 
 
-# Форма для создания отзыва
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['text', 'rating']
+        fields = ["text", "rating"]
         widgets = {
-            'text': forms.Textarea(attrs={'rows': 4}),
+            "text": forms.Textarea(attrs={"rows": 4}),
         }
 
     def save(self, commit=True):
         review = super().save(commit=False)
         if commit:
-            review.status = 'pending'  # Устанавливаем статус "На рассмотрении"
+            review.status = "pending"
             review.save()
         return review
