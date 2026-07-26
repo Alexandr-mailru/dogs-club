@@ -16,7 +16,7 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     if DEBUG:
-        SECRET_KEY = "dev-only-module16-change-me"
+        SECRET_KEY = "dev-only-dogs-club-change-me"
     else:
         raise RuntimeError("SECRET_KEY must be set when DEBUG=False")
 
@@ -164,7 +164,7 @@ else:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "module16-dogs",
+            "LOCATION": "dogs-club",
         }
     }
     SESSION_ENGINE = "django.contrib.sessions.backends.db"

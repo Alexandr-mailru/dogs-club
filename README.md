@@ -1,8 +1,6 @@
-# Клуб собак (Module 16)
+# Клуб собак
 
 Django-проект: пользователи, карточки собак, поиск/сортировка, отзывы и модерация.
-
-Исходник: [Alexmailru195/Module16](https://github.com/Alexmailru195/Module16) — обновлённая версия для портфолио.
 
 ## Что умеет
 
@@ -21,7 +19,7 @@ Python 3.12+ · Django 4.2 · SQLite (по умолчанию) · WhiteNoise · 
 ## Быстрый старт
 
 ```bash
-cd Module16
+cd dogs-club
 python -m venv .venv
 .venv\Scripts\activate          # Windows
 # source .venv/bin/activate     # Linux/macOS
@@ -39,8 +37,7 @@ python manage.py runserver
 
 ## Важно по безопасности
 
-В старом репозитории в `settings.py` был **пароль почты в открытом виде**.  
-В этой версии секреты только из `.env`. Если пароль приложения Яндекс когда-либо светился в GitHub — **смените его** в настройках Яндекса.
+Секреты только из `.env` (см. `.env_sample`). Не коммитьте пароли почты и `SECRET_KEY`.
 
 ## Переменные окружения
 
