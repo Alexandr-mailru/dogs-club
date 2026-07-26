@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Список собак{% endblock %}
+
+{% block content %}
+<h2>Список собак</h2>
+
+<!-- Форма поиска -->
+<form method="get" class="search-form">
+    <!-- Поиск по имени -->
+    <input type="text" name="search" placeholder="Поиск по имени" value="{{ search_query }}">
+
+    <!-- Поиск по породе -->
+    <input type="text" name="breed_search" placeholder="Поиск по породе" value="{{ breed_search }}">
+
+    <button type="submit">Найти</button>
+</form>
+
+<!-- Кнопки переключения статуса -->
+<div class="filters">
+    <!-- Кнопки "Активные" и "Деактивированные" видны только админам и модераторам -->
+    {% if user.role in allowed_roles %}
+    <a href="?status=active" class="btn {% if current_status == 'active' %}active{% endif %}">Активные</a>
+    <a href="?status=inactive" class="btn {% if current_status == 'inactive' %}active{% endif %}">Деактивированные</a>
+    {% endif %}
+</div>
+
+<!-- Таблица со списком собак -->
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Фото</th>
+        <th>Имя</th>
+        <th>Порода</th>
+        <th>Дата рождения</th>
+        <th>Владелец</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for dog in dogs %}
+    <tr>
+        <!-- Фото -->
+        <td>
+            {% if dog.photo %}
+            <img src="{{ dog.photo.url }}" alt="{{ dog.name }}" width="100">
+            {% else %}
+            <em>Нет фото</em>
+            {% endif %}
+        </td>
+        <!-- Имя -->
+        <td>{{ dog.name }}</td>
+        <!-- Порода -->
+        <td>{{ dog.breed }}</td>
+        <!-- Дата рождения -->
+        <td>{{ dog.birth_date }}</td>
+        <!-- Владелец -->
+        <td>
+            {{ dog.owner.username }}
+            <br>
+            <a href="{% url 'user-detail' dog.owner.id %}">Просмотреть профиль</a>
+            <br>
+            <a href="{% url 'review-create' dog.id %}">Оставить отзыв</a>
+        </td>
+        <!-- Действия -->
+        <td>
+            {% if user == dog.owner or user.role in allowed_roles %}
+            <a href="{% url 'dog_update' dog.pk %}" class="btn btn-warning">Редактировать</a>
+            <a href="{% url 'dog_delete' dog.pk %}" class="btn btn-danger">Удалить</a>
+            {% endif %}
+            <!-- Кнопка для изменения статуса активности -->
+            {% if user.role in allowed_roles or user.is_superuser %}
+            <a href="{% url 'toggle_dog_status' dog.pk %}">
+                {% if dog.is_active %}
+                Деактивировать
+                {% else %}
+                Активировать
+                {% endif %}
+            </a>
+            {% endif %}
+            <!-- Кнопка "Подробнее о собаке" -->
+            {% if user != dog.owner %}
+            <a href="{% url 'dog_detail' slug=dog.slug %}" class="btn">Подробнее о собаке</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6" style="text-align: center;">Нет собак в базе данных.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- Пагинация -->
+<div class="pagination">
+    <span class="step-links">
+        <!-- Первая страница -->
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="text-link">Первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">←</a>
+        {% endif %}
+
+        <!-- Текущая страница -->
+        <span class="current">{{ page_obj.number }}</span>
+
+        <!-- Следующие страницы -->
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">→</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="text-link">Последняя</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

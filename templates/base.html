@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MyProject{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <nav>
+            <ul>
+                <!-- Главная страница -->
+                <li><a href="{% url 'home' %}">Главная</a></li>
+
+                <!-- Ссылки для авторизованных пользователей -->
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' slug=user.slug %}">Профиль</a></li>
+                <li><a href="{% url 'update_profile' user.pk %}">Изменить данные</a></li>
+                <li><a href="{% url 'change_password' %}">Сменить пароль</a></li>
+                <li><a href="{% url 'dog_list' %}">Список собак</a></li>
+
+                <!-- Ссылка на список пользователей только для администраторов -->
+                {% if user.is_superuser %}
+                <li><a href="{% url 'user-list' %}">Список пользователей</a></li>
+                {% endif %}
+                <li><a href="{% url 'dog_create' %}">Добавить собаку</a></li>
+                <li><a href="{% url 'logout' %}">Выйти</a></li>
+                {% if user.is_staff or is_moderator %}
+                <li><a href="{% url 'review-moderation-list' %}">Модерация отзывов</a></li>
+                {% endif %}
+
+                <!-- Ссылки для неавторизованных пользователей -->
+                {% else %}
+                <li><a href="{% url 'register' %}">Регистрация</a></li>
+                <li><a href="{% url 'login' %}">Войти</a></li>
+                <li><a href="{% url 'generate_temp_password' %}">Восстановить пароль</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 MyProject. Все права защищены. Свяжитесь с нами: shph796@gmail.com</p>
+    </footer>
+</div>
+</body>
+</html>

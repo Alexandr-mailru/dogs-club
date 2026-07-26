@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Редактировать собаку{% else %}Добавить собаку{% endif %}{% endblock %}
+
+{% block content %}
+
+<h2>{% if form.instance.pk %}Редактировать собаку{% else %}Добавить собаку{% endif %}</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Сохранить</button>
+
+
+    <div class="pedigree-card">
+        <h3>Родословная</h3>
+        {{ pedigree_formset.management_form }}
+        {% for form in pedigree_formset %}
+        <div class="pedigree-form">
+            {{ form.as_p }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn">Сохранить</button>
+    </div>
+
+
+</form>
+<a href="{% url 'dog_list' %}" class="btn">Назад к списку собак</a>
+{% endblock %}

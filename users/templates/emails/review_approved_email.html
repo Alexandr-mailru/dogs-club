@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ваш отзыв был одобрен</title>
+</head>
+<body>
+    <p>Здравствуйте, {{ review.author.username }}!</p>
+    <p>Ваш отзыв о пользователе <strong>{{ review.target_user.username }}</strong> был одобрен.</p>
+    <p><strong>Текст отзыва:</strong> {{ review.text }}</p>
+    <p><strong>Оценка:</strong> {{ review.rating }}/5</p>
+    <p>Спасибо за ваш вклад!</p>
+</body>
+</html>

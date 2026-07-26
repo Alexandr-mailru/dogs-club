@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<form method="post" class="dog-card-footer">
+    <div class="profile-page">
+        <div class="profile-card">
+            <!-- Аватар пользователя -->
+            <div class="avatar-container">
+                {% if user.avatar %}
+                <img style="width: 300px" src="{{ user.avatar.url }}" alt="Avatar" class="avatar">
+                {% else %}
+                <img src="{% static 'images/default-avatar.png' %}" alt="Default Avatar" class="avatar">
+                {% endif %}
+            </div>
+
+            <!-- Информация о пользователе -->
+            <div class="user-info">
+                <h2>{{ user.username }}</h2>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Телефон:</strong> {{ user.phone_number|default:"Не указан" }}</p>
+                <p><strong>Адрес:</strong> {{ user.address|default:"Не указан" }}</p>
+                <p><strong>Дата рождения:</strong> {{ user.date_of_birth|date:"d.m.Y"|default:"Не указана" }}</p>
+                <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+            </div>
+
+
+            <!-- Ссылка на моих собак -->
+            <div class="dogs-link">
+                <a href="{% url 'my_dogs' %}" class="btn dogs-btn">Мои собаки</a>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="actions">
+                <a href="{% url 'update_profile' user.pk %}" class="btn edit-btn">Редактировать профиль</a>
+                <a href="{% url 'change_password' %}" class="btn password-btn">Сменить пароль</a>
+                <a href="{% url 'logout' %}" class="btn logout-btn">Выйти</a>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

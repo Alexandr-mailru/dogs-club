@@ -1,0 +1,72 @@
+[
+  {
+    "model": "dogs.breed",
+    "pk": 1,
+    "fields": {
+      "name": "Лабрадор"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 2,
+    "fields": {
+      "name": "Немецкая овчарка"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 3,
+    "fields": {
+      "name": "Бульдог"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 4,
+    "fields": {
+      "name": "Пудель"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 5,
+    "fields": {
+      "name": "Бигль"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 6,
+    "fields": {
+      "name": "Чихуахуа"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 7,
+    "fields": {
+      "name": "Ротвейлер"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 8,
+    "fields": {
+      "name": "Джек-рассел терьер"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 9,
+    "fields": {
+      "name": "Шпиц"
+    }
+  },
+  {
+    "model": "dogs.breed",
+    "pk": 10,
+    "fields": {
+      "name": "Далматин"
+    }
+  }
+]

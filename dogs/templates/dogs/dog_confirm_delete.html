@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="dog-card">
+        <!-- Заголовок карточки -->
+        <div class="dog-card-header">
+            <h2>Вы уверены, что хотите удалить питомца "{{ dog.name }}"?</h2>
+        </div>
+
+        <!-- Фото собаки -->
+        <div class="dog-photo">
+            {% if dog.photo %}
+            <img src="{{ dog.photo.url }}" alt="{{ dog.name }}" class="dog-avatar">
+            {% else %}
+            <p class="no-photo">Фото не загружено</p>
+            {% endif %}
+        </div>
+
+        <!-- Информация о собаке -->
+        <div class="dog-card-body">
+            <p><strong>Имя:</strong> {{ dog.name }}</p>
+            <p><strong>Порода:</strong> {{ dog.breed }}</p>
+            <p><strong>Дата рождения:</strong> {{ dog.birth_date|date:"d.m.Y" }}</p>
+            <p><strong>Дата регистрации:</strong> {{ dog.created_at|date:"d.m.Y H:i" }}</p> <!-- Новая строка -->
+        </div>
+
+        <!-- Подтверждение удаления -->
+        <p class="alert-error">Внимание! Это действие нельзя отменить. Все данные о собаке будут удалены.</p>
+        <form method="post" class="dog-card-footer">
+            {% csrf_token %}
+            <div class="dog-actions">
+                <button type="submit" class="btn btn-danger delete-btn">Да, удалить</button>
+                <a href="{% url 'dog_list' %}" class="btn edit-btn">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ dog.name }}
+{% endblock %}
+
+{% block content %}
+<div class="my-dogs-page">
+    <h1>Информация о собаке</h1>
+
+    <!-- Карточка собаки -->
+    <div class="dog-cards">
+        <div class="dog-card">
+            <div class="dog-card-header">
+                <h2>{{ dog.name }}</h2>
+            </div>
+            <div class="dog-card-body">
+                <p><strong>Порода:</strong> {{ dog.breed }}</p>
+                <p><strong>Возраст:</strong> {{ dog.age }} лет</p>
+                <p><strong>Дата рождения:</strong> {{ dog.birth_date|date:"d.m.Y" }}</p>
+                <p><strong>Количество просмотров:</strong> {{ dog.views_count }}</p>
+                {% if dog.photo %}
+                <img style="width: 300px" src="{{ dog.photo.url }}" alt="{{ dog.name }}" class="dog-photo">
+                {% else %}
+                <p class="no-photo">Фото не загружено</p>
+                {% endif %}
+                <!-- Добавляем описание собаки -->
+                {% if dog.description %}
+                <p><strong>Описание:</strong> {{ dog.description }}</p>
+                {% else %}
+                <p><strong>Описание:</strong> Описание отсутствует</p>
+                {% endif %}
+            </div>
+            <div class="dog-card-footer">
+                <a href="{% url 'dog_list' %}" class="btn back-btn">Назад к списку</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

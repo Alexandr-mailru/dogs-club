@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+Редактирование профиля
+{% endblock %}
+
+{% block content %}
+<div class="update-profile-page">
+    <h1>Редактирование профиля</h1>
+
+    <!-- Форма для редактирования данных -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Отображение полей формы -->
+        {{ form.as_p }}
+
+        <!-- Кнопка отправки формы -->
+        <button type="submit" class="btn save-btn">Сохранить</button>
+    </form>
+
+    <!-- Ссылка для возврата к профилю -->
+    <div class="back-link">
+        <a href="{% url 'profile' slug=user.slug %}">Назад к профилю</a>
+    </div>
+</div>
+{% endblock %}

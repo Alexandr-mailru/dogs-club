@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Профиль пользователя: {{ target_user.username }}</h2>
+
+<h3>Отзывы:</h3>
+
+<div class="reviews-container">
+    {% for review in reviews %}
+    <div class="review-card">
+        <h4>Автор: {{ review.author.username }}</h4>
+        <p><strong>Оценка:</strong> {{ review.rating }}/5</p>
+        <p><strong>Текст отзыва:</strong> {{ review.text }}</p>
+        <small>Дата: {{ review.created_at|date:"d.m.Y H:i" }}</small>
+        <small>Статус: {{ review.get_status_display }}</small>
+    </div>
+    {% empty %}
+    <p>Нет отзывов.</p>
+    {% endfor %}
+</div>
+{% endblock %}

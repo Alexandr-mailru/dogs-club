@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="my-dogs-page">
+    <h1>Мои собаки</h1>
+
+    {% if dogs %}
+    <div class="dog-cards">
+        {% for dog in dogs %}
+        <div class="dog-card">
+            <div class="dog-card-header">
+                <h2>{{ dog.name }}</h2>
+            </div>
+            <div class="dog-card-body">
+                <p><strong>Порода:</strong> {{ dog.breed }}</p>
+                <p><strong>Возраст:</strong> {{ dog.age }} лет</p>
+                <p><strong>Дата рождения:</strong> {{ dog.birth_date|date:"d.m.Y" }}</p>
+                {% if dog.photo %}
+                <img style="width: 300px" src="{{ dog.photo.url }}" alt="{{ dog.name }}" class="dog-photo">
+                {% else %}
+                <p class="no-photo">Фото не загружено</p>
+                {% endif %}
+            </div>
+            <div class="dog-card-footer">
+                <a href="{% url 'dog_update' dog.pk %}" class="btn edit-btn">Редактировать</a>
+                <a href="{% url 'dog_delete' dog.pk %}" class="btn delete-btn">Удалить</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-dogs">У вас пока нет собак.</p>
+    {% endif %}
+</div>
+{% endblock %}

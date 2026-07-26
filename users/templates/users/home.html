@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<h1>Добро пожаловать на сайт о собаках!</h1>
+<p>Здесь вы можете найти информацию о различных породах собак, добавить свою собаку и делиться фотографиями.</p>
+
+<h2>Советы по уходу за собаками</h2>
+<form method="post" class="dog-card-footer">
+    <ul>
+        <li>Регулярно вычесывайте шерсть вашей собаки.</li>
+        <li>Убедитесь, что ваш питомец получает достаточное количество физической активности.</li>
+        <li>Следите за рационом питания и не перекармливайте собаку.</li>
+    </ul>
+</form>
+
+<!-- Социальные сети -->
+<h2>Присоединяйтесь к нашему сообществу!</h2>
+<div class="social-links">
+    <a href="https://instagram.com/dogs_community" target="_blank">Instagram</a>
+    <a href="https://vk.com/dogs_community" target="_blank">ВКонтакте</a>
+    <a href="https://t.me/dogy_community" target="_blank">Telegram</a>
+</div>
+
+{% endblock %}

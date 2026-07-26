@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Модерация отзывов</h2>
+
+<ul>
+    {% for review in reviews %}
+    <li>
+        <strong>Автор:</strong> {{ review.author.username }}<br>
+        <strong>Текст:</strong> {{ review.text }}<br>
+        <strong>Оценка:</strong> {{ review.rating }}/5<br>
+        <a href="{% url 'review-moderation-update' review.pk %}">Изменить статус</a>
+    </li>
+    {% empty %}
+    <p>Нет отзывов на рассмотрении.</p>
+    {% endfor %}
+</ul>
+{% endblock %}
