@@ -34,11 +34,11 @@ class DogForm(forms.ModelForm):
         return birth_date
 
     def clean(self):
-        """
-        Общая валидация формы
-        """
         cleaned_data = super().clean()
-        self.instance.clean()
+        birth_date = cleaned_data.get("birth_date")
+        if birth_date:
+            self.instance.birth_date = birth_date
+            self.instance.clean()
         return cleaned_data
 
 

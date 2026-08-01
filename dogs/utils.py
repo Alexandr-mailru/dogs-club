@@ -11,7 +11,7 @@ def send_email(subject, message, recipient_list):
         message=message,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=recipient_list,
-        fail_silently=False,
+        fail_silently=True,
     )
 
 
