@@ -179,18 +179,17 @@ class Pedigree(models.Model):
 
 
 @receiver(post_save, sender=Dog)
-def update_views_count(sender, instance, **kwargs):
-    """
-    Отправляет письмо владельцу, если количество просмотров собаки кратно 100
-    """
-    if not kwargs.get('created'):
-        if instance.views_count % 100 == 0 and instance.owner:
-            subject = f"Ваша собака {instance.name} популярна!"
-            message = f"Карточка вашей собаки '{instance.name}' набрала {instance.views_count} просмотров."
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [instance.owner.email],
-                fail_silently=True,
-            )
+def notify_popular_dog(sender, instance, **kwargs):
+    """Письмо владельцу при 100, 200, … просмотрах (не при 0)."""
+    if kwargs.get("created"):
+        return
+    views = instance.views_count or 0
+    if views == 0 or views % 100 != 0 or not instance.owner:
+        return
+    send_mail(
+        f"Ваша собака {instance.name} популярна!",
+        f"Карточка вашей собаки '{instance.name}' набрала {views} просмотров.",
+        settings.DEFAULT_FROM_EMAIL,
+        [instance.owner.email],
+        fail_silently=True,
+    )

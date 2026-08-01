@@ -11,12 +11,12 @@ from .views import (
 )
 
 urlpatterns = [
-    path('', DogListView.as_view(), name='dog_list'),
-    path('dogs/<slug:slug>/', DogDetailView.as_view(), name='dog_detail'),
-    path('dog/create/', DogCreateView.as_view(), name='dog_create'),
-    path('dog/<int:pk>/update/', DogUpdateView.as_view(), name='dog_update'),
-    path('dog/<int:pk>/delete/', DogDeleteView.as_view(), name='dog_delete'),
-    path('clear-dog-cache/<int:pk>/', ClearDogCacheView.as_view(), name='clear_dog_cache'),
-    path('clear-all-cache/', ClearAllCacheView.as_view(), name='clear_all_cache'),
-    path('dog/<int:pk>/toggle-status/', ToggleDogStatusView.as_view(), name='toggle_dog_status'),
+    path("", DogListView.as_view(), name="dog_list"),
+    path("create/", DogCreateView.as_view(), name="dog_create"),
+    path("<slug:slug>/", DogDetailView.as_view(), name="dog_detail"),
+    path("<int:pk>/update/", DogUpdateView.as_view(), name="dog_update"),
+    path("<int:pk>/delete/", DogDeleteView.as_view(), name="dog_delete"),
+    path("<int:pk>/toggle-status/", ToggleDogStatusView.as_view(), name="toggle_dog_status"),
+    path("cache/<int:pk>/clear/", ClearDogCacheView.as_view(), name="clear_dog_cache"),
+    path("cache/clear-all/", ClearAllCacheView.as_view(), name="clear_all_cache"),
 ]

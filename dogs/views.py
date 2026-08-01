@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.urls import reverse_lazy
@@ -6,11 +6,12 @@ from django.http import JsonResponse
 from django.forms import inlineformset_factory
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import models
+from django import forms
+
 from .models import Dog, Pedigree
 from .forms import DogForm, PedigreeForm
 from .services import get_dog_from_cache, clear_dog_cache, clear_all_cache
 from .utils import send_email
-from django import forms
 
 
 class DogListView(ListView):
@@ -142,27 +143,26 @@ class DogCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        pedigree_formset = context['pedigree_formset']
+        pedigree_formset = context["pedigree_formset"]
 
-        if pedigree_formset.is_valid():
-            dog = form.save(commit=False)
-            dog.owner = self.request.user
-            dog.save()
-
-            pedigree_formset.instance = dog
-            pedigree_formset.save()
-
-            # Отправляем уведомление на email пользователя
-            subject = "Новая собака зарегистрирована"
-            message = f"Вы успешно зарегистрировали собаку: {dog.name}."
-            recipient_list = [self.request.user.email]
-            send_email(subject, message, recipient_list)
-
-            messages.success(self.request, "Собака успешно добавлена!")
-            return super().form_valid(form)
-        else:
+        if not pedigree_formset.is_valid():
             messages.error(self.request, "Ошибка в форме. Проверьте введенные данные.")
             return self.form_invalid(form)
+
+        self.object = form.save(commit=False)
+        self.object.owner = self.request.user
+        self.object.save()
+
+        pedigree_formset.instance = self.object
+        pedigree_formset.save()
+
+        send_email(
+            "Новая собака зарегистрирована",
+            f"Вы успешно зарегистрировали собаку: {self.object.name}.",
+            [self.request.user.email],
+        )
+        messages.success(self.request, "Собака успешно добавлена!")
+        return redirect(self.get_success_url())
 
 
 class DogFullForm(forms.ModelForm):
@@ -269,24 +269,28 @@ class DogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class ClearDogCacheView(View):
-    """
-    Очищает кэш для конкретной собаки
-    """
+class ClearDogCacheView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """Очищает кэш для конкретной собаки (только staff/модератор)."""
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff or getattr(user, "role", None) in ("admin", "moderator")
 
     def get(self, request, pk):
-        clear_dog_cache(pk)
-        return JsonResponse({'message': f'Кэш для собаки с ID {pk} очищен.'})
+        clear_dog_cache(pk=pk)
+        return JsonResponse({"message": f"Кэш для собаки с ID {pk} очищен."})
 
 
-class ClearAllCacheView(View):
-    """
-    Очищает весь кэш
-    """
+class ClearAllCacheView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """Очищает весь кэш (только staff/модератор)."""
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff or getattr(user, "role", None) in ("admin", "moderator")
 
     def get(self, request):
         clear_all_cache()
-        return JsonResponse({'message': 'Весь кэш очищен.'})
+        return JsonResponse({"message": "Весь кэш очищен."})
 
 
 class ToggleDogStatusView(LoginRequiredMixin, UserPassesTestMixin, View):

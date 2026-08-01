@@ -61,27 +61,21 @@
             <br>
             <a href="{% url 'user-detail' dog.owner.id %}">Просмотреть профиль</a>
             <br>
-            <a href="{% url 'review-create' dog.id %}">Оставить отзыв</a>
+            {% if user.is_authenticated and user != dog.owner %}
+            <a href="{% url 'review-create' dog.owner.id %}">Оставить отзыв владельцу</a>
+            {% endif %}
         </td>
         <!-- Действия -->
         <td>
+            <a href="{% url 'dog_detail' slug=dog.slug %}" class="btn">Подробнее</a>
             {% if user == dog.owner or user.role in allowed_roles %}
             <a href="{% url 'dog_update' dog.pk %}" class="btn btn-warning">Редактировать</a>
             <a href="{% url 'dog_delete' dog.pk %}" class="btn btn-danger">Удалить</a>
             {% endif %}
-            <!-- Кнопка для изменения статуса активности -->
             {% if user.role in allowed_roles or user.is_superuser %}
             <a href="{% url 'toggle_dog_status' dog.pk %}">
-                {% if dog.is_active %}
-                Деактивировать
-                {% else %}
-                Активировать
-                {% endif %}
+                {% if dog.is_active %}Деактивировать{% else %}Активировать{% endif %}
             </a>
-            {% endif %}
-            <!-- Кнопка "Подробнее о собаке" -->
-            {% if user != dog.owner %}
-            <a href="{% url 'dog_detail' slug=dog.slug %}" class="btn">Подробнее о собаке</a>
             {% endif %}
         </td>
     </tr>
