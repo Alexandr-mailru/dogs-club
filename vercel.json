@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "dogs-club": {
+      "entrypoint": "myproject/wsgi.py",
+      "framework": "django",
+      "root": ".",
+      "buildCommand": "python -m pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": { "type": "service", "service": "dogs-club" } }
+  ]
+}

@@ -15,7 +15,7 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
-    if DEBUG:
+    if DEBUG or os.getenv("VERCEL"):
         SECRET_KEY = "dev-only-dogs-club-change-me"
     else:
         raise RuntimeError("SECRET_KEY must be set when DEBUG=False")
@@ -27,6 +27,12 @@ ALLOWED_HOSTS = [
 ]
 if DEBUG and "testserver" not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append("testserver")
+if os.getenv("VERCEL"):
+    ALLOWED_HOSTS += [".vercel.app", ".now.sh"]
+    vercel_url = os.getenv("VERCEL_URL")
+    if vercel_url:
+        ALLOWED_HOSTS.append(vercel_url)
+    DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -90,7 +96,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": Path("/tmp/django.sqlite3") if os.getenv("VERCEL") else (BASE_DIR / "db.sqlite3"),
         }
     }
 
@@ -191,6 +197,16 @@ if RENDER_EXTERNAL_HOSTNAME:
     if origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(origin)
 
+VERCEL_URL = os.getenv("VERCEL_URL")
+if VERCEL_URL:
+    if VERCEL_URL not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(VERCEL_URL)
+    origin = f"https://{VERCEL_URL}"
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
+CSRF_TRUSTED_ORIGINS.append("https://dogs-club.vercel.app")
+CSRF_TRUSTED_ORIGINS.append("https://dogs-club-six.vercel.app")
+
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_HTTPONLY = False
@@ -200,7 +216,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "1").lower() in {"1", "true", "yes"}
+    SECURE_SSL_REDIRECT = os.getenv(
+        "SECURE_SSL_REDIRECT", "0" if os.getenv("VERCEL") else "1"
+    ).lower() in {"1", "true", "yes"}
     SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "31536000"))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
